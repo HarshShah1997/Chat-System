@@ -46,7 +46,7 @@
     <div class="row">
         <div class="col-lg-5">
             <div class="panel panel-default">
-                <div class="panel-body">
+                <div id="panelBody" class="panel-body">
                     {% for msg in messages %}
                     {{ msg }}<br>
                     {% endfor %}
@@ -56,12 +56,12 @@
 
             </div>
             <!--panel-->
-            <form action="{{ url_for('receiveMessage') }}" class="form-inline" method="POST">
+            <!--<form class="form-inline" method="POST">-->
                 <div class="form-group">
-                    <textarea class="form-control" rows="1" name="chatText" placeholder="Type a message"></textarea>
+                    <textarea class="form-control" rows="1" id="chatText" name="chatText" placeholder="Type a message"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">Send</button>
-            </form>
+                <button class="btn btn-primary">Send</button>
+            <!--</form>-->
 
         </div>
 
@@ -73,6 +73,22 @@
 
 <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<script>
+$(document).ready(function() {
+    $("button").click(function() {
+        $.ajax({
+            url: "{{ url_for('receiveMessage') }}", 
+            type: "POST", 
+            data: {
+                'chatText': $("#chatText").val()
+            },
+            success: function(result) {
+            $("#panelBody").html(result);
+        }});
+    });
+});
+</script>
+        
 </body>
 </html>
 
