@@ -11,8 +11,16 @@ def root():
 def receiveMessage():
     message = request.form['chatText']
     messages.append(message)
-    return message
-    #return redirect(url_for('root'))
+
+    rendered = getHtml()
+    return make_response(rendered)
+
+def getHtml():
+    text = '''{% for msg in messages %}
+                {{ msg }}<br>
+              {% endfor %}'''
+    return render_template_string(text, messages=messages)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
