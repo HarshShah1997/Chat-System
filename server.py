@@ -10,10 +10,14 @@ def root():
 @app.route("/_receiveMessage", methods=["POST"])
 def receiveMessage():
     message = request.form['chatText']
-    messages.append(message)
+    if message.strip() != '':
+        messages.append(message)
+    return ('', 204)
 
+@app.route("/_sendMessages")
+def sendMessagesList():
     rendered = getHtml()
-    return make_response(rendered)
+    return rendered
 
 def getHtml():
     text = '''{% for msg in messages %}

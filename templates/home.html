@@ -57,10 +57,10 @@
             </div>
             <!--panel-->
             <!--<form class="form-inline" method="POST">-->
-                <div class="form-group">
-                    <textarea class="form-control" rows="1" id="chatText" name="chatText" placeholder="Type a message"></textarea>
-                </div>
-                <button class="btn btn-primary">Send</button>
+            <div class="form-group">
+                <textarea class="form-control" rows="1" id="chatText" name="chatText" placeholder="Type a message"></textarea>
+            </div>
+            <button class="btn btn-primary">Send</button>
             <!--</form>-->
 
         </div>
@@ -74,22 +74,40 @@
 <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 <script>
-$(document).ready(function() {
-    $("button").click(function() {
-        $.ajax({
-            url: "{{ url_for('receiveMessage') }}", 
-            type: "POST", 
-            data: {
-                'chatText': $("#chatText").val()
-            },
-            success: function(result) {
-            $("#panelBody").html(result);
+var interval = 4000; //1 second
+function sendMessage() {
+    $.ajax({
+        url: "{{ url_for('receiveMessage') }}", 
+        type: "POST", 
+        data: {
+        'chatText': $("#chatText").val()
+        },
+        success: function() {
+            recvMessage(),
             $("#chatText").val('');
-        }});
+        }
     });
+}
+
+function recvMessage() {
+    $.ajax({
+        url: "{{ url_for('sendMessagesList') }}",
+        type: "GET",
+        success: function(result) {
+            $("#panelBody").html(result);            
+        },
+        complete: function(result) {
+            setTimeout(recvMessage, interval);
+        }
+    });
+}
+
+$(document).ready(function() {
+    $("button").click(sendMessage);
+    setTimeout(recvMessage, interval);
 });
 </script>
-        
+
 </body>
 </html>
 
