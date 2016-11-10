@@ -10,8 +10,9 @@ def root():
 @app.route("/_receiveMessage", methods=["POST"])
 def receiveMessage():
     message = request.form['chatText']
+    name = request.form['username']
     if message.strip() != '':
-        messages.append(message)
+        messages.append((name, message))
     return ('', 204)
 
 @app.route("/_sendMessages")
@@ -20,8 +21,8 @@ def sendMessagesList():
     return rendered
 
 def getHtml():
-    text = '''{% for msg in messages %}
-                {{ msg }}<br>
+    text = '''{% for name, msg in messages %}
+                {{ name }}: {{ msg }}<br>
               {% endfor %}'''
     return render_template_string(text, messages=messages)
 

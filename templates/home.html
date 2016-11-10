@@ -45,12 +45,14 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-5">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="username">Your Name</label>
+                    <input class="form-control" type="text" name="username" id="username" value="Anonymous">
+                </div>
+            </form>
             <div class="panel panel-default">
                 <div id="panelBody" class="panel-body">
-                    {% for msg in messages %}
-                    {{ msg }}<br>
-                    {% endfor %}
-
                 </div>
                 <!--./panel-body-->
 
@@ -60,7 +62,7 @@
             <div class="form-group">
                 <textarea class="form-control" rows="1" id="chatText" name="chatText" placeholder="Type a message"></textarea>
             </div>
-            <button class="btn btn-primary">Send</button>
+            <button id="send" class="btn btn-primary">Send</button>
             <!--</form>-->
 
         </div>
@@ -80,7 +82,8 @@ function sendMessage() {
         url: "{{ url_for('receiveMessage') }}", 
         type: "POST", 
         data: {
-        'chatText': $("#chatText").val()
+        'chatText': $("#chatText").val(),
+        'username': $("#username").val()
         },
         success: function() {
             recvMessage(),
@@ -103,6 +106,11 @@ function recvMessage() {
 }
 
 $(document).ready(function() {
+    $("#chatText").keypress(function(e) {
+        if (e.keyCode == 13) {
+            $("#send").click();
+        }
+    });
     $("button").click(sendMessage);
     setTimeout(recvMessage, interval);
 });
