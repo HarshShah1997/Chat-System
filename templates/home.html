@@ -62,12 +62,14 @@
                 <textarea class="form-control" rows="1" id="chatText" name="chatText" placeholder="Type a message"></textarea>
             </div>
             <button id="send" class="btn btn-primary">Send</button>
-            <form id="uploadForm">
-            <label class="btn btn-primary" for="my-file-selector">
-                <input id="my-file-selector" type="file" style="display:none;" onchange="$('#upload-file-info').html($(this).val());">
+        <form class="form-inline" id="uploadForm">
+            <div class="form-group">
+                <label class="btn btn-primary" for="my-file-selector">
+                    <input class="form-control" id="my-file-selector" type="file" style="display:none;" onchange="displayFileName()" name="file">
                     Browse
-            </label>
-            <span class='label label-info' id="upload-file-info"></span>
+                </label>
+                <span class='label label-info' id="upload-file-info"></span>
+        </div>
             </form>
 
         </div>
@@ -81,7 +83,26 @@
 <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 <script>
-var interval = 4000; //1 second
+var interval = 4000; //4 seconds
+
+function uploadFile() {
+    var fileData = new FormData(jQuery('form')[1]);
+
+    $.ajax({
+        url: "{{ url_for('uploadFile') }}",
+        data: fileData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        type: "POST",
+        success: function(data) {
+            var control = $("#my-file-selector");
+            control.replaceWith( control = control.clone( true ) );
+            $("#upload-file-info").text('');
+
+        }
+    });
+}
 function sendMessage() {
     $.ajax({
         url: "{{ url_for('receiveMessage') }}", 
@@ -117,8 +138,15 @@ $(document).ready(function() {
         }
     });
     $("button").click(sendMessage);
+    $("button").click(uploadFile);
     setTimeout(recvMessage, interval);
 });
+
+function displayFileName() {
+   var name = $('#my-file-selector').val().split('\\').pop(); 
+
+   $('#upload-file-info').html(name);
+}
 </script>
 
 </body>

@@ -17,7 +17,7 @@ def receiveMessage():
     message = request.form['chatText']
     name = request.form['username']
     if message.strip() != '':
-        messages.append((name, message))
+        messages.append((name, message, ''))
     return ('', 204)
 
 @app.route("/_sendMessages")
@@ -36,12 +36,21 @@ def uploadFile():
     if recvFile and allowed_file(recvFile.filename, allowed_extensions):
         filename = secure_filename(recvFile.filename)
         recvFile.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        messages.append(('Anonymous', '', filename))
         return 'Uploaded successfully'
     return 'Invalid file'
 
+@app.route('/uploads/<filename>')
+def fileLink(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+def createLink(filename):
+    link = url_for('fileLink', filename=filename) 
+    return link
+
 def getHtml():
-    text = '''{% for name, msg in messages %}
-                {{ name }}: {{ msg }}<br>
+    text = '''{% for name, msg, link in messages %}
+                {{ name }}: {{ msg }} <a href="{{ url_for('fileLink', filename=link) }}">{{ link }}</a><br>
               {% endfor %}'''
     return render_template_string(text, messages=messages)
 
