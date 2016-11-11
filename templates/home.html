@@ -58,12 +58,17 @@
 
             </div>
             <!--panel-->
-            <!--<form class="form-inline" method="POST">-->
             <div class="form-group">
                 <textarea class="form-control" rows="1" id="chatText" name="chatText" placeholder="Type a message"></textarea>
             </div>
             <button id="send" class="btn btn-primary">Send</button>
-            <!--</form>-->
+            <form id="uploadForm">
+            <label class="btn btn-primary" for="my-file-selector">
+                <input id="my-file-selector" type="file" style="display:none;" onchange="$('#upload-file-info').html($(this).val());">
+                    Browse
+            </label>
+            <span class='label label-info' id="upload-file-info"></span>
+            </form>
 
         </div>
 
